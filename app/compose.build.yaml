@@ -1,0 +1,11 @@
+# Layer this on top of compose.yaml to build from this checkout instead of
+# pulling the published image — only useful when you have the source tree,
+# so it stays out of compose.yaml itself (see that file's header comment).
+#
+#   docker compose -f compose.yaml -f compose.build.yaml up -d --build
+
+services:
+  home-meal-planner:
+    build:
+      context: .
+    image: home-meal-planner:local

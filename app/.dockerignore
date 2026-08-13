@@ -1,0 +1,21 @@
+# Rebuilt inside the image
+node_modules
+.next
+
+# Never ship the developer's database or secrets
+data
+.env
+.env.local
+*.db
+*.db-wal
+*.db-shm
+
+# Not needed at build time
+.git
+.gitignore
+README.md
+AGENTS.md
+CLAUDE.md
+coverage
+*.log
+.verify-*.mts

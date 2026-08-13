@@ -1,0 +1,155 @@
+@import "tailwindcss";
+@import "./palettes.css";
+
+/*
+ * Design tokens.
+ *
+ * Every colour is defined once here, so components reference semantic names
+ * (bg-surface, text-muted) rather than raw palette steps — that keeps
+ * `dark:`-style variants out of component files entirely. This block is also
+ * the "Default" standard palette (see `lib/theme/palettes.ts`): there is no
+ * separate `[data-palette="default"]` block in `app/palettes.css` because
+ * these values already are that palette, and Tailwind needs literal values
+ * here regardless to register the utilities.
+ *
+ * Primary: herb green. Accent: warm red, reserved for highlights. A
+ * dedicated danger red stays legible against a dark surface.
+ */
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --radius-card: 1rem;
+
+  --color-canvas: oklch(0.17 0.004 75); /* page background */
+  --color-surface: oklch(0.215 0.005 75); /* cards, bars */
+  --color-surface-muted: oklch(0.26 0.006 75);
+  --color-line: oklch(0.32 0.007 75);
+  --color-line-strong: oklch(0.42 0.008 75);
+
+  --color-ink: oklch(0.96 0.003 75); /* primary text */
+  --color-ink-muted: oklch(0.74 0.008 75); /* secondary text */
+  --color-ink-faint: oklch(0.58 0.008 75); /* placeholders */
+
+  --color-primary: oklch(0.72 0.14 155);
+  --color-primary-hover: oklch(0.79 0.14 155);
+  --color-primary-soft: oklch(0.3 0.05 155);
+  --color-on-primary: oklch(0.16 0.02 155);
+
+  --color-accent: oklch(0.8 0.14 75);
+  --color-accent-soft: oklch(0.32 0.05 75);
+
+  --color-danger: oklch(0.68 0.17 25);
+  --color-danger-soft: oklch(0.29 0.06 25);
+  --color-on-danger: oklch(0.16 0.02 25);
+
+  --color-focus: oklch(0.72 0.14 155);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  /* One consistent focus ring everywhere, never removed without replacement. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+
+@utility safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ------------------------------------------------------------------ *
+ * Date inputs (see components/ui/date-input.tsx)
+ *
+ * `appearance: none` makes every engine honour the shared control box —
+ * height, padding, border, left-aligned value. iOS otherwise draws a centred
+ * button-like control that ignores all of it and looks mis-margined next to a
+ * real input. Tailwind's preflight already left-aligns the value text
+ * (`::-webkit-date-and-time-value { text-align: inherit }`).
+ *
+ * One calendar affordance per pointer type, never two:
+ *
+ *  - coarse: the decorative `.date-field-icon` shows; tapping the field opens
+ *    the OS picker. Chromium's own indicator is stretched invisibly over the
+ *    icon's corner so a tap there still counts as "the field".
+ *  - fine, Chromium/WebKit: the `.date-field-trigger` button shows and opens
+ *    our styled calendar. The native indicator is removed outright.
+ *  - fine, Firefox: no custom affordance renders; Firefox's own native
+ *    calendar icon and picker are used as-is.
+ *
+ * The Firefox exception is not a shortcut — four separate attempts to paint
+ * over its icon all failed, tested on a real Firefox build, not assumed:
+ * `appearance: none` (pixel-identical before/after), a precisely-positioned
+ * opaque sibling matched to the input's own measured bounding box, and that
+ * same sibling with an explicit z-index plus an isolated stacking context on
+ * its wrapper. All four left the native icon visible underneath. Only a
+ * `position: fixed` element appended to `<body>` outside the input's local
+ * stacking context — the exact mechanism a floating calendar button can't
+ * use without becoming a scroll-tracked portal — succeeded. Gecko renders
+ * this icon in a layer that a normal sibling cannot occlude. Firefox's own
+ * picker is fully functional, so the fallback is the field's plain
+ * appearance with the native icon, not a broken one.
+ * ------------------------------------------------------------------ */
+
+.date-field input[type="date"] {
+  position: relative; /* containing block for the indicator overlay */
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 2.5rem; /* room for the icon or trigger */
+}
+
+.date-field-icon {
+  display: none;
+}
+
+.date-field-trigger {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .date-field-icon {
+    display: block;
+  }
+
+  .date-field input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2.75rem;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
+@media (pointer: fine) {
+  .date-field-trigger {
+    display: inline-flex;
+  }
+
+  .date-field input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+}
+
+/* Matches Firefox only: no other engine implements -moz-appearance. */
+@supports (-moz-appearance: none) {
+  @media (pointer: fine) {
+    .date-field-trigger {
+      display: none;
+    }
+  }
+}

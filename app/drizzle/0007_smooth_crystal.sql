@@ -1,0 +1,1 @@
+ALTER TABLE `shopping_list` DROP COLUMN `source_label`;

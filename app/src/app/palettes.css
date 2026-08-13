@@ -1,0 +1,241 @@
+/*
+ * Palettes.
+ *
+ * `globals.css`'s `@theme` block is the "Default" standard palette, and
+ * doubles as Tailwind's registration of these tokens as utilities
+ * (`bg-surface`, `text-ink-muted`, …). Every palette below only redefines
+ * the same 18 custom properties, never a component style, keyed off
+ * `[data-palette="id"]` on `<html>`. `app/layout.tsx` is the only place that
+ * decides which id wins — an explicit palette (default "default") is always
+ * stamped server-side, so components never need to care which one is active.
+ *
+ * Two flat lists, registered in `lib/theme/palettes.ts` — there is no
+ * light/dark switching concept here, each id is just its own self-contained
+ * set of values:
+ *  - Standard: named palettes picked explicitly in Settings. Hex source
+ *    values are approximated to oklch by eye, not converted precisely —
+ *    close enough to read as "Dracula" etc., worth nudging further if a
+ *    specific token looks off next to the real thing.
+ *  - Festive: one palette per calendar holiday, applied automatically during
+ *    that holiday's month when the user opts in (`lib/theme/festive.ts`).
+ *
+ * `color-scheme` is set per palette purely so native form controls and
+ * scrollbars render correctly for that palette's own tone — it isn't read
+ * anywhere in app code.
+ *
+ * Festive `danger` / `danger-soft` / `on-danger` are deliberately left
+ * unchanged from the base palette's values — destructive actions should
+ * look the same regardless of season, so the "red = delete" association a
+ * user builds up never gets reshuffled by a passing holiday. Standard
+ * palettes are a different case: picking "Dracula" means wanting Dracula's
+ * red too, so those are free to use each theme's own danger colour.
+ *
+ * Wrapped in the same `base` layer `globals.css` uses, so these overrides
+ * keep the same cascade priority they'd have if this were still one file.
+ */
+@layer base {
+  /* Dracula — https://draculatheme.com */
+  :root[data-palette="dracula"] {
+    color-scheme: dark;
+
+    --color-canvas: oklch(0.22 0.02 280);
+    --color-surface: oklch(0.25 0.02 280);
+    --color-surface-muted: oklch(0.29 0.02 280);
+    --color-line: oklch(0.34 0.025 280);
+    --color-line-strong: oklch(0.44 0.03 280);
+
+    --color-ink: oklch(0.97 0.005 95);
+    --color-ink-muted: oklch(0.72 0.02 280);
+    --color-ink-faint: oklch(0.56 0.02 280);
+
+    --color-primary: oklch(0.72 0.14 300);
+    --color-primary-hover: oklch(0.78 0.14 300);
+    --color-primary-soft: oklch(0.3 0.06 300);
+    --color-on-primary: oklch(0.16 0.02 300);
+
+    --color-accent: oklch(0.72 0.19 350);
+    --color-accent-soft: oklch(0.3 0.07 350);
+
+    --color-danger: oklch(0.65 0.2 25);
+    --color-danger-soft: oklch(0.29 0.07 25);
+    --color-on-danger: oklch(0.16 0.02 25);
+
+    --color-focus: oklch(0.72 0.14 300);
+  }
+
+  /* Nord — https://nordtheme.com */
+  :root[data-palette="nord"] {
+    color-scheme: dark;
+
+    --color-canvas: oklch(0.27 0.02 250);
+    --color-surface: oklch(0.32 0.02 250);
+    --color-surface-muted: oklch(0.36 0.02 250);
+    --color-line: oklch(0.42 0.025 250);
+    --color-line-strong: oklch(0.5 0.03 250);
+
+    --color-ink: oklch(0.95 0.005 250);
+    --color-ink-muted: oklch(0.78 0.015 250);
+    --color-ink-faint: oklch(0.6 0.02 250);
+
+    --color-primary: oklch(0.75 0.09 200);
+    --color-primary-hover: oklch(0.8 0.09 200);
+    --color-primary-soft: oklch(0.3 0.04 200);
+    --color-on-primary: oklch(0.16 0.02 200);
+
+    --color-accent: oklch(0.72 0.1 50);
+    --color-accent-soft: oklch(0.3 0.05 50);
+
+    --color-danger: oklch(0.62 0.13 20);
+    --color-danger-soft: oklch(0.28 0.06 20);
+    --color-on-danger: oklch(0.16 0.02 20);
+
+    --color-focus: oklch(0.75 0.09 200);
+  }
+
+  /* Gruvbox — https://github.com/morhetz/gruvbox */
+  :root[data-palette="gruvbox"] {
+    color-scheme: dark;
+
+    --color-canvas: oklch(0.24 0.01 80);
+    --color-surface: oklch(0.29 0.012 70);
+    --color-surface-muted: oklch(0.35 0.014 65);
+    --color-line: oklch(0.42 0.016 60);
+    --color-line-strong: oklch(0.5 0.02 60);
+
+    --color-ink: oklch(0.88 0.03 90);
+    --color-ink-muted: oklch(0.68 0.025 80);
+    --color-ink-faint: oklch(0.55 0.02 75);
+
+    --color-primary: oklch(0.72 0.17 50);
+    --color-primary-hover: oklch(0.78 0.17 50);
+    --color-primary-soft: oklch(0.3 0.07 50);
+    --color-on-primary: oklch(0.18 0.02 50);
+
+    --color-accent: oklch(0.75 0.15 115);
+    --color-accent-soft: oklch(0.3 0.06 115);
+
+    --color-danger: oklch(0.64 0.19 30);
+    --color-danger-soft: oklch(0.28 0.07 30);
+    --color-on-danger: oklch(0.16 0.02 30);
+
+    --color-focus: oklch(0.72 0.17 50);
+  }
+
+  /* Rosé Pine — https://rosepinetheme.com. Neutrals carry the "rosé" — a
+     genuinely pink-tinted background, not just a purple "iris" primary. */
+  :root[data-palette="rose-pine"] {
+    color-scheme: dark;
+
+    --color-canvas: oklch(0.18 0.025 340);
+    --color-surface: oklch(0.21 0.026 340);
+    --color-surface-muted: oklch(0.25 0.03 340);
+    --color-line: oklch(0.33 0.035 340);
+    --color-line-strong: oklch(0.42 0.04 340);
+
+    --color-ink: oklch(0.9 0.018 340);
+    --color-ink-muted: oklch(0.66 0.022 340);
+    --color-ink-faint: oklch(0.52 0.02 340);
+
+    --color-primary: oklch(0.75 0.09 305);
+    --color-primary-hover: oklch(0.8 0.09 305);
+    --color-primary-soft: oklch(0.3 0.05 305);
+    --color-on-primary: oklch(0.18 0.02 305);
+
+    --color-accent: oklch(0.82 0.06 195);
+    --color-accent-soft: oklch(0.32 0.04 195);
+
+    --color-danger: oklch(0.66 0.13 5);
+    --color-danger-soft: oklch(0.3 0.06 5);
+    --color-on-danger: oklch(0.16 0.02 5);
+
+    --color-focus: oklch(0.75 0.09 305);
+  }
+
+  /* Tokyo Night — https://github.com/enkia/tokyo-night-vscode-theme */
+  :root[data-palette="tokyo-night"] {
+    color-scheme: dark;
+
+    --color-canvas: oklch(0.19 0.02 270);
+    --color-surface: oklch(0.22 0.02 270);
+    --color-surface-muted: oklch(0.27 0.025 270);
+    --color-line: oklch(0.34 0.03 270);
+    --color-line-strong: oklch(0.44 0.035 270);
+
+    --color-ink: oklch(0.85 0.03 270);
+    --color-ink-muted: oklch(0.72 0.03 270);
+    --color-ink-faint: oklch(0.56 0.025 270);
+
+    --color-primary: oklch(0.7 0.12 265);
+    --color-primary-hover: oklch(0.76 0.12 265);
+    --color-primary-soft: oklch(0.3 0.06 265);
+    --color-on-primary: oklch(0.16 0.02 265);
+
+    --color-accent: oklch(0.72 0.13 305);
+    --color-accent-soft: oklch(0.3 0.06 305);
+
+    --color-danger: oklch(0.68 0.15 10);
+    --color-danger-soft: oklch(0.3 0.06 10);
+    --color-on-danger: oklch(0.16 0.02 10);
+
+    --color-focus: oklch(0.7 0.12 265);
+  }
+
+  /* Halloween — charcoal/black, pumpkin orange, purple accent. */
+  :root[data-palette="halloween"] {
+    color-scheme: dark;
+
+    --color-canvas: oklch(0.14 0.006 290);
+    --color-surface: oklch(0.185 0.008 290);
+    --color-surface-muted: oklch(0.23 0.01 290);
+    --color-line: oklch(0.3 0.012 290);
+    --color-line-strong: oklch(0.4 0.014 290);
+
+    --color-ink: oklch(0.95 0.004 290);
+    --color-ink-muted: oklch(0.72 0.01 290);
+    --color-ink-faint: oklch(0.55 0.01 290);
+
+    --color-primary: oklch(0.72 0.19 45);
+    --color-primary-hover: oklch(0.78 0.19 45);
+    --color-primary-soft: oklch(0.28 0.07 45);
+    --color-on-primary: oklch(0.16 0.02 45);
+
+    --color-accent: oklch(0.62 0.19 305);
+    --color-accent-soft: oklch(0.28 0.08 305);
+
+    --color-danger: oklch(0.68 0.17 25);
+    --color-danger-soft: oklch(0.29 0.06 25);
+    --color-on-danger: oklch(0.16 0.02 25);
+
+    --color-focus: oklch(0.72 0.19 45);
+  }
+
+  /* Christmas — majority evergreen, with holly red as trim (borders,
+     accent, danger) rather than confined to one rarely-seen token. */
+  :root[data-palette="christmas"] {
+    color-scheme: dark;
+
+    --color-canvas: oklch(0.16 0.015 150);
+    --color-surface: oklch(0.2 0.02 150);
+    --color-surface-muted: oklch(0.25 0.022 150);
+    --color-line: oklch(0.36 0.06 20);
+    --color-line-strong: oklch(0.46 0.09 20);
+
+    --color-ink: oklch(0.95 0.006 150);
+    --color-ink-muted: oklch(0.74 0.012 150);
+    --color-ink-faint: oklch(0.58 0.012 150);
+
+    --color-primary: oklch(0.6 0.13 150);
+    --color-primary-hover: oklch(0.66 0.13 150);
+    --color-primary-soft: oklch(0.28 0.06 150);
+    --color-on-primary: oklch(0.14 0.02 150);
+
+    --color-accent: oklch(0.64 0.2 20);
+    --color-accent-soft: oklch(0.28 0.09 20);
+
+    --color-danger: oklch(0.68 0.17 25);
+    --color-danger-soft: oklch(0.29 0.06 25);
+    --color-on-danger: oklch(0.16 0.02 25);
+
+    --color-focus: oklch(0.6 0.13 150);
+  }
+}

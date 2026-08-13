@@ -1,0 +1,46 @@
+services:
+  home-meal-planner:
+    image: ghcr.io/dev-cadet/home-meal-planner:latest
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      # Generate with: openssl rand -base64 32
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+
+      TZ: ${TZ:-Australia/Brisbane}
+      DATE_FORMAT: ${DATE_FORMAT:-DD/MM/YYYY} # DD/MM/YYYY | MM/DD/YYYY | YYYY-MM-DD
+      MEASUREMENT_SYSTEM: ${MEASUREMENT_SYSTEM:-metric} # metric | imperial
+      WEEK_STARTS_ON: ${WEEK_STARTS_ON:-sunday}
+
+      # Always allows first user sing-up as admin regardless.
+      ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-false}
+      INVITE_CODE_TTL_DAYS: ${INVITE_CODE_TTL_DAYS:-3}
+
+      DISABLE_SIGNUPS: ${DISABLE_SIGNUPS:-false}
+      DISABLE_PASSWORD_CHANGES: ${DISABLE_PASSWORD_CHANGES:-false}
+      SEED_ON_START: ${SEED_ON_START:-false} # Add Sample Data
+
+      # --- Storage (defaults baked into the image) ----------------------
+      DATABASE_PATH: /data/app.db
+      MIGRATIONS_DIR: /app/drizzle
+
+    volumes:
+      - meal-planner-data:/data
+
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+volumes:
+  meal-planner-data:
